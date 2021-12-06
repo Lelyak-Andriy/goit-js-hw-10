@@ -9,6 +9,7 @@ const DEBOUNCE_DELAY = 300;
 const refs = {
     countryContainer: document.querySelector(".country-info"),
     searchInput: document.querySelector("#search-box"),
+    countryList: document.querySelector(".country-list"),
 }
 
 refs.searchInput.addEventListener('input', debounce(countrySearchInputHandler, DEBOUNCE_DELAY));
@@ -16,30 +17,33 @@ refs.searchInput.addEventListener('input', debounce(countrySearchInputHandler, D
 function countrySearchInputHandler(e) {
     e.preventDefault();
     
-const country = refs.searchInput.value.trim();
-    
+const country = refs.searchInput.value.trim();  
 
-    API.fetchCountries(country)
-        .then(renderCountryCard, renderCountriesListMarkup)
-        .catch(onFetchError)
-        // .finally(() => country.reset());
+API.fetchCountries(country)
+    .then(renderCountryCard)
+    .catch(onFetchError)
+
 }
   
 
 
-    function renderCountryCard(country) {
-    const markup = countriesCardTpl(country);
-    // console.log(markup);
-    refs.countryContainer.innerHTML = markup;
+function renderCountryCard(country) {
+    let markup = countriesCardTpl(country);
+    let markupList = countriesListTpl(country);
+    // let countries = []
+    if (country.length > 10) {
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
     }
+    console.log(country.length)
+     if (country.length > 1) { return refs.countryList.innerHTML = markupList }
+    console.log(country.length)
+    if (country.length === 1) { return refs.countryList.innerHTML = markup }
+    console.log(country.length)
+}
 
-    function renderCountriesListMarkup(country) {
-    const markupList = countriesListTpl(country);
-    refs.countryContainer.insertAdjacentHTML('afterbegin', markupList)
-    }
 
     function onFetchError(error) {
-    Notiflix.Notify.error("Oops, there is no country with that name");
+    Notiflix.Notify.failure('Oops, there is no country with that name');
     }
 
     
