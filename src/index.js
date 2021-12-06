@@ -1,5 +1,6 @@
 import './css/styles.css';
 import countriesCardTpl from './templates/countries-card.hbs';
+import countriesListTpl from './templates/countries-list.hbs'
 import API  from './fetchCountries';
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
@@ -15,11 +16,11 @@ refs.searchInput.addEventListener('input', debounce(countrySearchInputHandler, D
 function countrySearchInputHandler(e) {
     e.preventDefault();
     
-const country = refs.searchInput.value;
+const country = refs.searchInput.value.trim();
     
 
     API.fetchCountries(country)
-        .then(renderCountryCard)
+        .then(renderCountryCard, renderCountriesListMarkup)
         .catch(onFetchError)
         // .finally(() => country.reset());
 }
@@ -32,6 +33,11 @@ const country = refs.searchInput.value;
     refs.countryContainer.innerHTML = markup;
     }
 
-function onFetchError(error) {
+    function renderCountriesListMarkup(country) {
+    const markup = countriesListTpl(country);
+    refs.countryContainer.insertAdjacentHTML('afterbegin', markup)
+    }
+
+    function onFetchError(error) {
     Notiflix.Notify.error("Oops, there is no country with that name");
-}
+    }
