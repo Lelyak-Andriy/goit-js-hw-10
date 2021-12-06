@@ -34,10 +34,12 @@ const country = refs.searchInput.value.trim();
     }
 
     function renderCountriesListMarkup(country) {
-    const markup = countriesListTpl(country);
-    refs.countryContainer.insertAdjacentHTML('afterbegin', markup)
+    const markupList = countriesListTpl(country);
+    refs.countryContainer.insertAdjacentHTML('afterbegin', markupList)
     }
 
     function onFetchError(error) {
     Notiflix.Notify.error("Oops, there is no country with that name");
     }
+
+    
