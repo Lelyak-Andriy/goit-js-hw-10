@@ -4,52 +4,41 @@ import countriesListTpl from './templates/countries-list.hbs'
 import API  from './fetchCountries';
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
+
 const DEBOUNCE_DELAY = 300;
+const searchInput = document.querySelector("#search-box");
+const countryList = document.querySelector(".country-list");
 
-const refs = {
-    countryContainer: document.querySelector(".country-info"),
-    searchInput: document.querySelector("#search-box"),
-    countryList: document.querySelector(".country-list"),
-}
 
-refs.searchInput.addEventListener('input', debounce(countrySearchInputHandler, DEBOUNCE_DELAY));
+searchInput.addEventListener('input', debounce(countrySearchInputHandler, DEBOUNCE_DELAY));
 
 function countrySearchInputHandler(e) {
     e.preventDefault();
     
-const country = refs.searchInput.value.trim();  
+    const country = searchInput.value.trim();
 
 API.fetchCountries(country)
     .then(renderCountryCard)
-    .catch(onFetchError)
-    
+    .catch(onFetchError) 
 }
   
 function onFetchError(error) {
-    if (error) { refs.countryList.innerHTML = '';
+    if (error) {countryList.innerHTML = '';
         Notiflix.Notify.failure('Oops, there is no country with that name')
     }
-
 }
 
 
 function renderCountryCard(country) {
-    let markup = countriesCardTpl(country);
-    let markupList = countriesListTpl(country);
-    if (country.length > 10) {
-        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
-    }
-    console.log(country.length)
-    if (country.length > 2) { return refs.countryList.innerHTML = markupList }
-    console.log(country.length)
-    if (country.length === 1) { return refs.countryList.innerHTML = markup }
-    console.log(country.length)
-    
+    const markupList = countriesListTpl(country);
+    const markup = countriesCardTpl(country);
+    if (country.length >= 10) {Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');}
+    if (country.length >= 2) {countryList.innerHTML = markupList}
+    if (country.length === 1) {countryList.innerHTML = markup}
+   
 }
 
-function clearSearchInput(searchInput) {
-    if (!searchInput) {return refs.countryList.innerHTML = ''};
-}
+
 
 
 
