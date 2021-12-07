@@ -22,15 +22,13 @@ const country = refs.searchInput.value.trim();
 API.fetchCountries(country)
     .then(renderCountryCard)
     .catch(onFetchError)
+    .finally(clearSearchInput);
 
 }
   
-
-
 function renderCountryCard(country) {
     let markup = countriesCardTpl(country);
     let markupList = countriesListTpl(country);
-    // let countries = []
     if (country.length > 10) {
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
     }
@@ -39,11 +37,14 @@ function renderCountryCard(country) {
     console.log(country.length)
     if (country.length === 1) { return refs.countryList.innerHTML = markup }
     console.log(country.length)
+
 }
 
 
-    function onFetchError(error) {
-    Notiflix.Notify.failure('Oops, there is no country with that name');
-    }
+function onFetchError(error) {
+Notiflix.Notify.failure('Oops, there is no country with that name');
+}
 
-    
+    function clearSearchInput() {
+    refs.searchInput.innerHTML = '';
+}
